@@ -174,8 +174,8 @@ const handleYTPost = async (post: Post, webhook: Webhook | WebhookClient, subtex
 }
 
 const searchPosts = async () => {
-  const posts = await scrapePosts("UCAv7n_0TS3MbP3OdisnuM7A", true);
   const previousLast = (await fetchDataMessage()).content;
+  const posts = await scrapePosts("UCAv7n_0TS3MbP3OdisnuM7A", true, previousLast);
   const newPosts = [];
   for (const post of posts.posts) {
     if (post.postId === previousLast) break;

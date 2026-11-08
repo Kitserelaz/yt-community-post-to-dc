@@ -69,7 +69,7 @@ export type Post = {
     sharedPost: Post | null,
     isSharedPost: boolean
 }
-export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean) => {
+export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean, stopAtPostId?: string) => {
     const originalUrl = "https://www.youtube.com/channels/" + channelId + "/community"
     const browse = async (metadata: any): Promise<any> => {
         const response = await fetch("https://www.youtube.com/youtubei/v1/browse?prettyPrint=false", {
@@ -186,6 +186,7 @@ export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean) =>
             if (itemSection.backstagePostThreadRenderer) {
                 const sharedPostRenderer = itemSection.backstagePostThreadRenderer.post.sharedPostRenderer;
                 const rawPost = itemSection.backstagePostThreadRenderer.post.backstagePostRenderer ?? sharedPostRenderer;
+                if (rawPost.postId === stopAtPostId) return;
                 console.log(rawPost.postId)
                 let postResponse = await browse({
                     browseId: "FEpost_detail",
