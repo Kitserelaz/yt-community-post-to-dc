@@ -91,7 +91,7 @@ export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean) =>
                 ...metadata
             })
         });
-        if (!response.ok) throw response;
+        if (!response.ok) throw new Error(`YouTube browse failed: ${response.status} ${response.statusText}`);
         console.log(response.status)
         return await response.json();
     };
@@ -214,7 +214,7 @@ export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean) =>
                     directPost: directPost
                 })
                 posts.push(parsePost(directPost, rawPost, !!sharedPostRenderer))
-            } else if (itemSection.continuationItemRenderer) {
+            } else if (!onlyFirstPage && itemSection.continuationItemRenderer) {
                 const continuation = await browse({
                     continuation: itemSection.continuationItemRenderer.continuationEndpoint.continuationCommand.token
                 });
@@ -224,7 +224,7 @@ export const scrapePosts = async (channelId: string, onlyFirstPage?: boolean) =>
                     console.warn("Could not find continuation")
                     return
                 }
-                if (!onlyFirstPage) await parseItemSections(continuation.onResponseReceivedEndpoints[0].appendContinuationItemsAction.continuationItems)
+                await parseItemSections(continuation.onResponseReceivedEndpoints[0].appendContinuationItemsAction.continuationItems)
             }
         }
     }

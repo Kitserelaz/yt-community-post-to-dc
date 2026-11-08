@@ -199,9 +199,17 @@ const searchPosts = async () => {
   }
 };
 
-await searchPosts();
+const pollPosts = async () => {
+  try {
+    await searchPosts();
+  } catch (error) {
+    console.error("Post polling failed:", error);
+  }
+};
 
-setInterval(searchPosts, 60000);
+await pollPosts();
+
+setInterval(pollPosts, 60000);
 
 Bun.serve({
   port: 3000,
